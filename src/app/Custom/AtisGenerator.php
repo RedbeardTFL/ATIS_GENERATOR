@@ -215,7 +215,11 @@ class AtisGenerator
             return false;
         }
 
-        $this->parts["zulu_time"] = $this->spoken($return[2] . $return[3], false, $speak);
+        $weather = "";
+        if($this->output_type == "awos"){
+            $weather = " weather ";
+        }
+        $this->parts["zulu_time"] = $this->spoken($return[2] . $return[3], false, $speak) . $weather;
 
         return true;
     }
@@ -625,7 +629,6 @@ class AtisGenerator
 
             return true;
         }
-
         $this->parts["approaches"] = "simultaneous ils and visual approaches in use";
 
         return true;
@@ -775,11 +778,18 @@ class AtisGenerator
                 next($metar);
             }
 
-            $this->approaches(array("ils", "visual"));
+            //$this->approaches($this->approaches);
             $this->runways($this->landing_runways, $this->departing_runways, $speak);
             $this->remarks1($this->remarks1);
             $this->remarks2($this->remarks2);
             $this->ident_end($speak);
+
+            $output = array();
+            foreach($this->parts as $key=>$value) {
+                $output[] = preg_replace("@\s+@", " ", strtoupper(Helpers::merge_recursive($value)) . "... ");
+            }
+    
+            return implode(" ", $output);
         } elseif ($this->output_type == "awos") {
             $metar = $this->metar;
             $this->station_info($speak);
@@ -794,16 +804,17 @@ class AtisGenerator
                 $this->pressure($part, $speak);
                 next($metar);
             }
+
+            $output = array();
+            foreach($this->parts as $key=>$value) {
+
+                $output[] = preg_replace("@\s+@", " ", strtoupper(Helpers::merge_recursive($value)) . " ");
+            }
+            return implode(" ", $output);
         } else {
             return false;
         }
 
-        $output = array();
-        while ($part = current($this->parts)) {
-            $output[] = preg_replace("@\s+@", " ", strtoupper(Helpers::merge_recursive($part)) . "... ");
-            next($this->parts);
-        }
 
-        return implode(" ", $output);
     }
 }

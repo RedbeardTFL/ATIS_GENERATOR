@@ -143,7 +143,7 @@ class TextToSpeechController extends Controller
                 'data' => null
             ]);
         }
-        $ch = curl_init("https://api.voicerss.org/?key=$VOICE_RSS_API_KEY&hl=en-us&c=MP3&v=John&f=16khz_16bit_stereo&src=" . rawurlencode($atis));
+        $ch = curl_init("https://api.voicerss.org/?key=$VOICE_RSS_API_KEY&hl=en-us&c=MP3&r=-2&v=John&f=16khz_16bit_stereo&src=" . rawurlencode($atis));
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_NOBODY, 0);
         curl_setopt($ch, CURLOPT_TIMEOUT, 5);
